@@ -1,38 +1,36 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Hero from "./components/Hero";
-
-// Pages
 import Home from "./pages/Home";
-import Services from "./pages/Services";
 import Packages from "./pages/Packages";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
+import PackageDetails from "./pages/PackageDetails";
 import BookingForm from "./pages/BookingForm";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
+import ChatbotWidget from "./components/ChatbotWidget";
 
 function App() {
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={
-          <>
-            <Hero />
-            <Home />
-          </>
-        } />
-        <Route path="/services" element={<Services />} />
-        <Route path="/packages" element={<Packages />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/booking" element={<BookingForm />} /> {/* <- new route */}
-        <Route path="/admin" element={<AdminDashboard />} />
-      </Routes>
-      <Footer />
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 p-4">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/packages" element={<Packages />} />
+            <Route path="/packages/:id" element={<PackageDetails />} />
+            <Route path="/booking" element={<BookingForm />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Routes>
+        </main>
+        <ChatbotWidget />
+      </div>
     </Router>
   );
 }

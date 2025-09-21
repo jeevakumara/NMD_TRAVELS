@@ -1,11 +1,9 @@
-// backend/routes/bookings.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const db = require('../db'); // make sure this exports a valid mysql2/promise connection
-const { authenticateToken, requireAdmin } = require('../middleware/auth');
+const db = require("../db");
 
-// POST /api/bookings
-router.post('/', async (req, res) => {
+// POST /api/bookings - save a new booking
+router.post("/", async (req, res) => {
   try {
     const {
       user_name,
@@ -15,13 +13,8 @@ router.post('/', async (req, res) => {
       destination,
       start_date,
       people,
-      message
+      message,
     } = req.body;
-
-    console.log('Booking request received:', req.body); // debug incoming data
-
-    // Ensure 'people' is a number
-    const peopleCount = Number(people) || 1;
 
     await db.execute(
       `INSERT INTO bookings 
@@ -34,31 +27,33 @@ router.post('/', async (req, res) => {
         package_id || null,
         destination,
         start_date,
-        peopleCount,
-        message
+        people,
+        message,
       ]
     );
 
-    res.status(200).json({ message: 'Booking saved successfully!' });
+    res.json({ message: "Booking saved" });
   } catch (err) {
-    console.error('Booking error:', err); // log server errors
-    res.status(500).json({ message: 'Server error. Booking failed.' });
+    console.error("Error inserting booking:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-// GET /api/bookings/admin (admin only)
-router.get('/admin', authenticateToken, requireAdmin, async (req, res) => {
+// GET /api/bookings/admin - fetch all bookings
+router.get("/admin", async (req, res) => {
   try {
     const [rows] = await db.execute(
-      `SELECT b.*, p.title AS package_title 
+      `SELECT b.*, p.title as package_title 
        FROM bookings b 
        LEFT JOIN packages p ON b.package_id = p.id 
        ORDER BY b.created_at DESC`
     );
-    res.status(200).json(rows);
+
+    console.log("Bookings fetched:", rows); // ✅ rows is now defined
+    res.json(rows);
   } catch (err) {
-    console.error('Admin bookings fetch error:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Error fetching bookings:", err);
+    res.status(500).json({ message: "Error fetching bookings" });
   }
 });
 

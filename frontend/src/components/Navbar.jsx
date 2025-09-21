@@ -1,39 +1,74 @@
-import React, { useState } from "react";
+// src/components/Navbar.jsx
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Menu, X, Plane } from "lucide-react";
 
-const Navbar = () => {
+export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Packages", path: "/packages" },
+    { name: "About", path: "/about" },
+    { name: "Contact", path: "/contact" },
+    { name: "Login", path: "/login" },
+  ];
+
   return (
-    <nav className="bg-white shadow-md fixed w-full z-50">
-      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <div className="text-2xl font-bold text-blue-600">TravelCo</div>
-        <div className="hidden md:flex space-x-6">
-          <Link to="/" className="hover:text-blue-600 transition">Home</Link>
-          <Link to="/services" className="hover:text-blue-600 transition">Services</Link>
-          <Link to="/packages" className="hover:text-blue-600 transition">Packages</Link>
-          <Link to="/about" className="hover:text-blue-600 transition">About</Link>
-          <Link to="/contact" className="hover:text-blue-600 transition">Contact</Link>
-        </div>
-        <div className="md:hidden">
-          <button onClick={() => setIsOpen(!isOpen)}>
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-            </svg>
-          </button>
+    <nav className="bg-white shadow-md fixed top-0 w-full z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <Plane className="text-blue-600" size={28} />
+            <span className="text-2xl font-bold text-blue-600">TravelCo</span>
+          </Link>
+
+          {/* Desktop Links */}
+          <div className="hidden md:flex space-x-6">
+            {navLinks.map((link, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ scale: 1.1 }}
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
+                <Link to={link.path}>{link.name}</Link>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button onClick={() => setIsOpen(!isOpen)}>
+              {isOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
       {isOpen && (
-        <div className="md:hidden bg-white shadow-md px-6 py-4 flex flex-col space-y-2">
-          <Link to="/" className="hover:text-blue-600 transition">Home</Link>
-          <Link to="/services" className="hover:text-blue-600 transition">Services</Link>
-          <Link to="/packages" className="hover:text-blue-600 transition">Packages</Link>
-          <Link to="/about" className="hover:text-blue-600 transition">About</Link>
-          <Link to="/contact" className="hover:text-blue-600 transition">Contact</Link>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="md:hidden bg-white shadow-lg"
+        >
+          <div className="px-4 py-3 space-y-2">
+            {navLinks.map((link, i) => (
+              <Link
+                key={i}
+                to={link.path}
+                className="block text-gray-700 hover:text-blue-600 font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+        </motion.div>
       )}
     </nav>
   );
-};
-
-export default Navbar;
+}

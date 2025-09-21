@@ -1,123 +1,142 @@
-import React, { useState } from "react";
+// src/pages/BookingForm.jsx
+import { useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
 
-const BookingForm = () => {
+export default function BookingForm() {
   const [formData, setFormData] = useState({
-    user_name: "",
+    name: "",
     email: "",
     phone: "",
     destination: "",
-    start_date: "",
+    startDate: "",
     people: 1,
-    message: ""
+    message: "",
   });
-  const [status, setStatus] = useState("");
 
-const handleChange = (e) => {
-  const value = e.target.name === "people" ? Number(e.target.value) : e.target.value;
-  setFormData({ ...formData, [e.target.name]: value });
-};
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const payload = { ...formData, people: Number(formData.people) };
-      const res = await axios.post("http://localhost:5000/api/bookings", payload);
-      setStatus(res.data.message);
+      const res = await axios.post("http://localhost:5000/bookings", formData);
+      setSuccess("Booking successful! We will contact you soon.");
+      setError("");
       setFormData({
-        user_name: "",
+        name: "",
         email: "",
         phone: "",
         destination: "",
-        start_date: "",
+        startDate: "",
         people: 1,
-        message: ""
+        message: "",
       });
     } catch (err) {
-      if (err.response) {
-        setStatus(err.response.data.message);
-      } else {
-        setStatus("Booking failed. Please try again.");
-      }
       console.error(err);
+      setError("Something went wrong. Please try again.");
+      setSuccess("");
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4 bg-white shadow-md rounded-lg mt-8">
-      <h2 className="text-2xl font-bold mb-4">Book Your Trip</h2>
-      {status && <p className="mb-4 text-green-600">{status}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="user_name"
-          placeholder="Your Name"
-          value={formData.user_name}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Phone"
-          value={formData.phone}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="text"
-          name="destination"
-          placeholder="Destination"
-          value={formData.destination}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="date"
-          name="start_date"
-          value={formData.start_date}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="number"
-          name="people"
-          min="1"
-          value={formData.people}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <textarea
-          name="message"
-          placeholder="Message (optional)"
-          value={formData.message}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
-        >
-          Book Now
-        </button>
-      </form>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-16 px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        className="max-w-3xl w-full bg-white shadow-lg rounded-2xl p-8"
+      >
+        <h1 className="text-3xl font-bold mb-6 text-center">Book Your Trip</h1>
+
+        {success && <p className="text-green-600 mb-4">{success}</p>}
+        {error && <p className="text-red-600 mb-4">{error}</p>}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleChange}
+              className="border px-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              className="border px-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+              className="border px-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="text"
+              name="destination"
+              placeholder="Destination"
+              value={formData.destination}
+              onChange={handleChange}
+              className="border px-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <input
+              type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              className="border px-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="number"
+              name="people"
+              min="1"
+              value={formData.people}
+              onChange={handleChange}
+              className="border px-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <textarea
+            name="message"
+            placeholder="Additional Message (optional)"
+            value={formData.message}
+            onChange={handleChange}
+            className="border px-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500"
+            rows={4}
+          ></textarea>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+          >
+            Submit Booking
+          </button>
+        </form>
+      </motion.div>
     </div>
   );
-};
-
-export default BookingForm;
+}

@@ -5,7 +5,7 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/auth');
 const packageRoutes = require('./routes/packages');
-const bookingRoutes = require('./routes/bookings');
+const bookingRoutes = require("./routes/bookings");
 const contactRoutes = require('./routes/contact');
 const chatRoutes = require('./routes/chat');
 
@@ -22,7 +22,7 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/packages', packageRoutes);
-app.use('/api/bookings', bookingRoutes);
+app.use("/api/bookings", bookingRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/chat', chatRoutes);
 
